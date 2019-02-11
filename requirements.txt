@@ -1,1 +1,1 @@
--e git+git://github.com/simomarsili/lilbio.git#egg=lilbio
+-e git+git://github.com/simomarsili/little-bio-parser.git#egg=lilbio
