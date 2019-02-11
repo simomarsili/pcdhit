@@ -1,0 +1,13 @@
+*.pyc
+.cache
+.pytest_cache
+.tox
+*egg-info
+venv
+vnv
+TODO
+tests
+tests/*
+!tests/test_template.py
+build/*
+dist/*
