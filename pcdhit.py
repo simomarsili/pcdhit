@@ -1,7 +1,33 @@
 import logging
 import lilbio
 
+logging.basicConfig(
+    # filename=<filename>,
+    # filemode='a',
+    format='%(module)-10s %(funcName)-20s: %(levelname)-8s %(message)s',
+    datefmt='%H:%M:%S',
+    level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+class PcdhitError(Exception):
+    """Base class for pcdhit exceptions."""
+
+
+class CdhitNotFoundError(PcdhitError):
+    """cdhit not installed."""
+
+    def __init__(self):
+        message = 'check if cd-hit is installed.'
+        super.__init__(message)
+
+
+class IdentityThresholdError(PcdhitError):
+    """ValueError for identity threshold."""
+
+    def __init__(self):
+        message = 'valid values are 0.7 <= thr <= 1.0'
+        super.__init__(message)
 
 
 def is_command(cmds):
@@ -32,56 +58,57 @@ def opentf():
 
 
 def filter(records, thr=0.9):
-    """Indices of non-redundant records from cd-hit output.
+    """Return non-redundant records from cd-hit output.
 
     cdhit: http://weizhongli-lab.org/cd-hit/
-    cdhot will cluster sequences that meet a similarity threshold. Record
-    indices contain a representative record for each cluster.
+    cdhit will cluster sequences that meet a similarity threshold and return a
+    representative record for each cluster:
+    cdhit -i <fin> -c <thr> -o <fout>
 
     Parameters
     ----------
-    seqs : iterable
-        Sequence strings.
+    records : iterable
+        Iterable of (header, sequence) tuples.
 
     thr : float, optional (0.9)
         Sequence identity threshold (cd-hit '-c <thr>' option).
 
-    Returns
-    -------
-    (records, positions) : tuple
-        records: indices of non-redundant records.
+    Yields
+    ------
+    (header, sequence) : tuple (str, str)
+        For each non-redundant record, a tuple containing header and sequence.
 
     """
     import subprocess
 
     # check for cd-hit on path
     cdhit_exe = is_command(['cd-hit', 'cdhit'])
+    logger.debug('cd-hit executable: %r', cdhit_exe)
     if cdhit_exe is None:
-        logging.error('cd-hit not found. Redundant records wont be filtered.')
+        raise CdhitNotFoundError
 
     if not 0.7 <= thr <= 1.0:
-        raise ValueError(
-            'Identity threshold should be in the [0.7,1.0] interval.')
+        raise IdentityThresholdError
 
     # open tmp files
-    with opentf() as fpi, opentf() as fpo:
-        # remove gaps (cdhit takes unaligned sequences as input)
-        nrec = 0
+    with opentf() as fin, opentf() as fout:
+        # write cd-hit input
         for rec in records:
             head, seq = rec
             seq = ''.join(seq)
+            # remove gaps (cdhit takes unaligned sequences as input)
+            # use 'X' as a placeholder
             print('>%s\n%s' % (head, seq.replace('-', 'X')),
-                  file=fpi)
-            nrec += 1
-        fpi.flush()
+                  file=fin)
+        fin.flush()
 
         # run cd-hit
         subprocess.call('%s -i %s -o %s -c %s > cdhit.log' %
-                        (cdhit_exe, fpi.name, fpo.name, thr),
+                        (cdhit_exe, fin.name, fout.name, thr),
                         shell=True)
-        fpo.flush()
+        fout.flush()
 
-        # indices of non-redundant records from cdhit output headers
-        for rec in lilbio.parse(fpo, fmt='fasta'):
+        for rec in lilbio.parse(fout, fmt='fasta'):
             head, seq = rec
+            # put gaps back
             yield head, seq.replace('X', '-')
