@@ -1,5 +1,14 @@
 import logging
 import lilbio
+import pkg_resources
+
+project_name = 'pcdhit'
+__version__ = pkg_resources.require(project_name)[0].version
+__copyright__ = 'Copyright (C) 2019 Simone Marsili'
+__license__ = 'BSD 3 clause'
+__author__ = 'Simone Marsili (simo.marsili@gmail.com)'
+__all__ = ['filter']
+
 
 logging.basicConfig(
     # filename=<filename>,
@@ -19,7 +28,7 @@ class CdhitNotFoundError(PcdhitError):
 
     def __init__(self):
         message = 'check if cd-hit is installed.'
-        super.__init__(message)
+        super().__init__(message)
 
 
 class IdentityThresholdError(PcdhitError):
@@ -27,7 +36,7 @@ class IdentityThresholdError(PcdhitError):
 
     def __init__(self):
         message = 'valid values are 0.7 <= thr <= 1.0'
-        super.__init__(message)
+        super().__init__(message)
 
 
 def is_command(cmds):
