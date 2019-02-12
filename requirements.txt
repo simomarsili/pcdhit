@@ -1,2 +1,1 @@
-# packageA
-# packageB
+-e git+git://github.com/simomarsili/little-bio-parser.git#egg=lilbio
