@@ -89,27 +89,28 @@ def print_input_fasta(records, f):
 
 
 @timeit
-def call_cdhit(cdhit_exe, fin, fout, thr):
-    import os
-    command = '%s -i %s -o %s -c %s' % (cdhit_exe, fin.name, fout.name, thr)
-    os.system(command)
+def call_cdhit(cdhit_exe, fin, fout, threshold):
+    import subprocess
+    command = '%s -i %s -o %s -c %s' % (cdhit_exe, fin.name, fout.name,
+                                        threshold)
+    subprocess.Popen(command, shell=True).wait()
 
 
 @timeit
-def filter(records, thr=0.9):
-    """Return non-redundant records from cd-hit output.
+def filter(records, threshold):
+    """Filter non-redundant records via cd-hit.
 
     cdhit: http://weizhongli-lab.org/cd-hit/
     cdhit will cluster sequences that meet a similarity threshold and return a
     representative record for each cluster:
-    cdhit -i <fin> -c <thr> -o <fout>
+    cdhit -i <fin> -c <threshold> -o <fout>
 
     Parameters
     ----------
     records : iterable
         Iterable of (header, sequence) tuples.
 
-    thr : float, optional (0.9)
+    threshold : float, optional (0.9)
         Sequence identity threshold (cd-hit '-c <thr>' option).
 
     Yields
@@ -125,7 +126,7 @@ def filter(records, thr=0.9):
     if cdhit_exe is None:
         raise CdhitNotFoundError
 
-    if not 0.7 <= thr <= 1.0:
+    if not 0.7 <= threshold <= 1.0:
         raise IdentityThresholdError
 
     # open tmp files
@@ -133,7 +134,7 @@ def filter(records, thr=0.9):
 
         print_input_fasta(records, fin)
 
-        call_cdhit(cdhit_exe, fin, fout, thr)
+        call_cdhit(cdhit_exe, fin, fout, threshold)
 
         for rec in lilbio.parse(fout, fmt='fasta'):
             head, seq = rec[0].split('@')
