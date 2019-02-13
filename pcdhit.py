@@ -26,6 +26,10 @@ class CdhitNotFoundError(PcdhitError):
         super().__init__(message)
 
 
+class CdhitCommandError(PcdhitError):
+    """cdhit command failed."""
+
+
 class IdentityThresholdError(PcdhitError):
     """ValueError for identity threshold."""
 
@@ -93,7 +97,9 @@ def call_cdhit(cdhit_exe, fin, fout, threshold):
     import subprocess
     command = '%s -i %s -o %s -c %s' % (cdhit_exe, fin.name, fout.name,
                                         threshold)
-    subprocess.Popen(command, shell=True).wait()
+    returncode = subprocess.Popen(command, shell=True).wait()
+    if returncode != 0:
+        raise CdhitCommandError
 
 
 @timeit
