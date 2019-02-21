@@ -13,11 +13,8 @@ SETUP_REQUIRES = []
 INSTALL_REQUIRES = [
     # # this is an example of URL based requirement (see PEP508):
     # 'package @ http://github.com/user/repo/archive/master.tar.gz',
-    'lilbio @ http://github.com/simomarsili/little-bio-parser/archive/'
-    'master.gz']
-INSTALL_REQUIRES = [
-
-]
+    'little-bio-parser @ http://github.com/simomarsili/little-bio-parser/'
+    'archive/master.tar.gz']
 EXTRAS_REQUIRES = {'test': ['pytest']}
 
 
