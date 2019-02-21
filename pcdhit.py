@@ -22,7 +22,7 @@ class CdhitNotFoundError(PcdhitError):
     """cdhit not installed."""
 
     def __init__(self):
-        message = 'check if cd-hit is installed.'
+        message = 'Check if cd-hit is installed.'
         super().__init__(message)
 
 
@@ -34,7 +34,7 @@ class IdentityThresholdError(PcdhitError):
     """ValueError for identity threshold."""
 
     def __init__(self):
-        message = 'valid values are 0.7 <= thr <= 1.0'
+        message = 'Valid values are 0.7 <= thr <= 1.0'
         super().__init__(message)
 
 
