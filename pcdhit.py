@@ -10,7 +10,6 @@ __license__ = 'BSD 3 clause'
 __author__ = 'Simone Marsili <simo.marsili@gmail.com>'
 __all__ = ['filter']
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -40,6 +39,7 @@ class IdentityThresholdError(PcdhitError):
 
 def timeit(func):
     """Timeit decorator."""
+
     @wraps(func)
     def timed(*args, **kwargs):
         import time
@@ -48,6 +48,7 @@ def timeit(func):
         ts1 = time.time()
         logger.debug('%r: %2.4f secs', func, ts1 - ts0)
         return result
+
     return timed
 
 
@@ -73,8 +74,7 @@ def is_command(cmds):
 def opentf():
     import tempfile
     tempfile = tempfile.NamedTemporaryFile
-    kwargs = {'delete': True,
-              'mode': 'r+'}
+    kwargs = {'delete': True, 'mode': 'r+'}
     return tempfile(**kwargs)
 
 
