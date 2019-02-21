@@ -11,12 +11,10 @@ PACKAGES = []
 VERSION_FILE = 'version.json'
 SETUP_REQUIRES = []
 INSTALL_REQUIRES = [
-    'lilbio @ http://github.com/simomarsili/little-bio-parser/archive/'
-    'v0.6.tar.gz']
-INSTALL_REQUIRES = [
     # # this is an example of URL based requirement (see PEP508):
-    # 'repo @ http://github.com/user/repo/asrchive/master.tar.gz',
-]
+    # 'package @ http://github.com/user/repo/archive/master.tar.gz',
+    'little-bio-parser @ http://github.com/simomarsili/little-bio-parser/'
+    'archive/master.tar.gz']
 EXTRAS_REQUIRES = {'test': ['pytest']}
 
 
