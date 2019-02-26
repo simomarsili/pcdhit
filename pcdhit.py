@@ -84,11 +84,10 @@ def print_input_fasta(records, f):
     for rec in records:
         head, seq = rec
         # store the original sequence in the header
-        head = '@'.join([head, ''.join(seq)])
-        seq = ''.join([c for c in seq if c != '-'])
         # remove gaps (cdhit takes unaligned sequences as input)
-        # use 'X' as a placeholder
-        print('>%s\n%s' % (head, seq), file=f)
+        print('>%s@%s\n%s' % (head,
+                              ''.join(seq),
+                              ''.join(c for c in seq if c != '-')), file=f)
     f.flush()
 
 
